@@ -29,7 +29,7 @@ Rake::GemPackageTask.new(spec) do |p|
 end
 Rake.application["package"].prerequisites.unshift("java:build")
 
-desc "Release to gemcutter"
+desc "Release to rubygems.org"
 task :release => :package do
   require 'rake/gemcutter'
   Rake::Gemcutter::Tasks.new(spec).define
