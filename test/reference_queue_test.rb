@@ -1,5 +1,5 @@
 require 'test/unit'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'references')
+require File.expand_path("../../lib/references", __FILE__)
 
 class TestReferenceQueue < Test::Unit::TestCase
   def test_can_add_references
@@ -37,25 +37,22 @@ class TestReferenceQueue < Test::Unit::TestCase
   end
   
   def test_references_are_added_when_the_object_has_been_collected
-    References::WeakReference::TestImpl.use do
+    References::Mock.use do
       obj = Object.new
       ref = References::WeakReference.new(obj)
       queue = References::ReferenceQueue.new
       queue.monitor(ref)
       assert_nil queue.shift
-      References::WeakReference::TestImpl.gc(obj)
-      # Fake out calling the finalizer on the object
-      finalizer = queue.instance_variable_get(:@finalizer)
-      finalizer.call(obj.object_id)
+      References::Mock.gc(obj)
       assert_equal ref, queue.shift
     end
   end
   
   def test_references_are_added_immediately_if_the_object_has_been_collected
-    References::WeakReference::TestImpl.use do
+    References::Mock.use do
       obj = Object.new
       ref = References::WeakReference.new(obj)
-      References::WeakReference::TestImpl.gc(obj)
+      References::Mock.gc(obj)
       queue = References::ReferenceQueue.new
       queue.monitor(ref)
       assert_equal ref, queue.shift

@@ -1,5 +1,5 @@
 require 'test/unit'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'references')
+require File.expand_path("../../lib/references", __FILE__)
 
 class TestStrongReference < Test::Unit::TestCase
   def test_can_get_objects

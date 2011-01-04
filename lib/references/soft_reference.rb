@@ -20,11 +20,14 @@ module References
     @@strong_references = [{}]
     @@gc_flag_set = false
     
+    # Number of garbage collection cycles after an object is used before a reference to it can be reclaimed.
+    MIN_GC_CYCLES = 10
+    
     @@finalizer = lambda do |object_id|
-      while @@strong_references.size >=3 do
+      while @@strong_references.size >= MIN_GC_CYCLES do
         @@strong_references.shift
       end
-      @@strong_references.push({}) if @@strong_references.size < 3
+      @@strong_references.push({}) if @@strong_references.size < MIN_GC_CYCLES
       @@gc_flag_set = false
     end
     

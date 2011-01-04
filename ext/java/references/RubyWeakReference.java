@@ -1,4 +1,4 @@
-package references.weak_reference;
+package org.jruby.ext.references;
 
 import java.lang.ref.WeakReference;
 import org.jruby.Ruby;
@@ -10,22 +10,24 @@ import org.jruby.runtime.ObjectAllocator;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.Visibility;
 
-public class JavaImpl extends RubyObject {
+public class RubyWeakReference extends RubyObject {
   private WeakReference _ref;
+  private static final String REFERENCED_OBJECT_ID_VARIABLE = "@referenced_object_id".intern();
 
-  public JavaImpl(Ruby runtime, RubyClass klass) {
+  public RubyWeakReference(Ruby runtime, RubyClass klass) {
     super(runtime, klass);
   }
   
   public static final ObjectAllocator ALLOCATOR = new ObjectAllocator() {
     public IRubyObject allocate(Ruby runtime, RubyClass klass) {
-      return new JavaImpl(runtime, klass);
+      return new RubyWeakReference(runtime, klass);
     }
   };
   
   @JRubyMethod(name = "initialize", frame = true, visibility = Visibility.PRIVATE)
   public IRubyObject initialize(ThreadContext context, IRubyObject obj) {
     _ref = new WeakReference<IRubyObject>(obj);
+    fastSetInstanceVariable(REFERENCED_OBJECT_ID_VARIABLE, obj.id());
     return context.getRuntime().getNil();
   }
 

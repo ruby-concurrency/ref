@@ -34,6 +34,8 @@ module References
       @finalizer = lambda{|object_id| push(@references.delete(object_id))}
     end
     
+    # Monitor a reference. When the object the reference points to is garbabe collected,
+    # the reference will be added to the queue.
     def monitor(reference)
       obj = reference.object
       if obj

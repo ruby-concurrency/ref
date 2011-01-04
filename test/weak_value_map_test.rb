@@ -1,8 +1,15 @@
 require 'test/unit'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'references')
+require File.expand_path("../../lib/references", __FILE__)
+require File.expand_path("../reference_value_map_behavior", __FILE__)
 
 class TestWeakValueMap < Test::Unit::TestCase
-  def test_uses_weak_references
-    assert_equal References::WeakReference, References::WeakValueMap.reference_class
+  include ReferenceValueMapBehavior
+  
+  def map_class
+    References::WeakValueMap
+  end
+  
+  def reference_class
+    References::WeakReference
   end
 end

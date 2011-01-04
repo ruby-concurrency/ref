@@ -1,8 +1,15 @@
 require 'test/unit'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'references')
+require File.expand_path("../../lib/references", __FILE__)
+require File.expand_path("../reference_value_map_behavior", __FILE__)
 
 class TestSoftValueMap < Test::Unit::TestCase
-  def test_uses_weak_references
-    assert_equal References::SoftReference, References::SoftValueMap.reference_class
+  include ReferenceValueMapBehavior
+  
+  def map_class
+    References::SoftValueMap
+  end
+  
+  def reference_class
+    References::SoftReference
   end
 end

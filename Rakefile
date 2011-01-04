@@ -42,12 +42,17 @@ namespace :java do
     base_dir = File.dirname(__FILE__)
     tmp_dir = File.join(base_dir, "tmp")
     classes_dir = File.join(tmp_dir, "classes")
+    jar_dir = File.join(base_dir, "lib", "org", "jruby", "ext", "references")
     FileUtils.rm_rf(classes_dir)
     ext_dir = File.join(base_dir, "ext", "java")
     source_files = FileList["#{base_dir}/**/*.java"]
     FileUtils.mkdir_p(classes_dir)
     `#{ENV['JAVA_HOME']}/bin/javac -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
-    `#{ENV['JAVA_HOME']}/bin/jar cf '#{base_dir}/lib/references/java_support.jar' -C '#{classes_dir}' references`
+    if $? == 0
+      FileUtils.rm_rf(jar_dir) if File.exist?(jar_dir)
+      FileUtils.mkdir_p(jar_dir)
+      `#{ENV['JAVA_HOME']}/bin/jar cf '#{File.join(jar_dir, 'reference.jar')}' -C '#{classes_dir}' org`
+    end
     FileUtils.rm_rf(classes_dir)
   end
 end

@@ -1,5 +1,5 @@
 require 'test/unit'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'references')
+require File.expand_path("../../lib/references", __FILE__)
 
 class TestSoftReference < Test::Unit::TestCase
   def test_can_get_non_garbage_collected_objects
@@ -13,9 +13,10 @@ class TestSoftReference < Test::Unit::TestCase
     # Since we can't reliably control the garbage collector, this is a brute force test.
     # It might not always fail if the garbage collector and memory allocator don't
     # cooperate, but it should fail often enough on continuous integration to
-    # hilite any problems.
+    # hilite any problems. Set the environment variable QUICK_TEST to "true" if you
+    # want to make the tests run quickly.
     id_to_ref = {}
-    100000.times do |i|
+    (ENV["QUICK_TEST"] == "true" ? 1000 : 100000).times do |i|
       obj = Object.new
       if id_to_ref.key?(obj.object_id)
         ref = id_to_ref[obj.object_id]
@@ -32,7 +33,13 @@ class TestSoftReference < Test::Unit::TestCase
       end
     end
   end
-
+  
+  def test_references_are_not_collected_immediately
+    ref = References::SoftReference.new(Object.new)
+    9.times{%w(allocate some memory on the heap) * 100; GC.start}
+    assert ref.object
+  end
+  
   def test_inspect
     ref = References::SoftReference.new(Object.new)
     assert ref.inspect
