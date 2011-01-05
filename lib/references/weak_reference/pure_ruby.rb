@@ -14,12 +14,11 @@ module References
     
     # Finalizer that cleans up weak references when an object is destroyed.
     @@object_finalizer = lambda do |object_id|
-      reference_ids = @@object_id_references[object_id]
+      reference_ids = @@object_id_references.delete(object_id)
       if reference_ids
         reference_ids.each do |reference_object_id|
           @@referenced_object_ids.delete(reference_object_id)
         end
-        @@object_id_references.delete(object_id)
       end
     end
 
