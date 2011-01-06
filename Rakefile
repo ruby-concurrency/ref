@@ -7,6 +7,9 @@ require File.expand_path('../lib/references', __FILE__)
 desc 'Default: run unit tests.'
 task :default => :test
 
+desc 'RVM like to call it tests'
+task :tests => :test
+
 Rake::TestTask.new do |t|
   t.libs << 'test'
   t.pattern = 'test/**/*_test.rb'

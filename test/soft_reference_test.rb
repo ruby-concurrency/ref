@@ -36,7 +36,7 @@ class TestSoftReference < Test::Unit::TestCase
   
   def test_references_are_not_collected_immediately
     ref = References::SoftReference.new(Object.new)
-    9.times{%w(allocate some memory on the heap) * 100; GC.start}
+    9.times{arr = %w(allocate some memory on the heap); arr *= 100; GC.start}
     assert ref.object
   end
   
