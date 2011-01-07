@@ -1,4 +1,4 @@
-module References
+module Ref
   # This class serves as a generic reference mechanism to other objects. The
   # actual reference can be either a WeakReference, SoftReference, or StrongReference.
   class Reference

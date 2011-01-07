@@ -1,4 +1,4 @@
-module References
+module Ref
   # A SoftReference represents a reference to an object that is not seen by
   # the tracing phase of the garbage collector. This allows the referenced
   # object to be garbage collected as if nothing is referring to it.
@@ -23,12 +23,16 @@ module References
     # Number of garbage collection cycles after an object is used before a reference to it can be reclaimed.
     MIN_GC_CYCLES = 10
     
+    @@lock = SafeMonitor.new
+    
     @@finalizer = lambda do |object_id|
-      while @@strong_references.size >= MIN_GC_CYCLES do
-        @@strong_references.shift
+      @@lock.synchronize do
+        while @@strong_references.size >= MIN_GC_CYCLES do
+          @@strong_references.shift
+        end
+        @@strong_references.push({}) if @@strong_references.size < MIN_GC_CYCLES
+        @@gc_flag_set = false
       end
-      @@strong_references.push({}) if @@strong_references.size < MIN_GC_CYCLES
-      @@gc_flag_set = false
     end
     
     # Create a new soft reference to an object.
@@ -51,10 +55,12 @@ module References
       # Create a strong reference to the object. This reference will live
       # for three passes of the garbage collector.
       def add_strong_reference(obj) #:nodoc:
-        @@strong_references.last[obj] = true
-        unless @@gc_flag_set
-          @@gc_flag_set = true
-          ObjectSpace.define_finalizer(Object.new, @@finalizer)
+        @@lock.synchronize do
+          @@strong_references.last[obj] = true
+          unless @@gc_flag_set
+            @@gc_flag_set = true
+            ObjectSpace.define_finalizer(Object.new, @@finalizer)
+          end
         end
       end
   end

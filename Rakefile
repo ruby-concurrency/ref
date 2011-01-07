@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rake/gempackagetask'
-require File.expand_path('../lib/references', __FILE__)
+require File.expand_path('../lib/ref', __FILE__)
 
 desc 'Default: run unit tests.'
 task :default => :test
@@ -20,12 +20,12 @@ end
 desc 'Generate documentation.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.options << '--title' << 'References' << '--line-numbers' << '--inline-source' << '--main' << 'README.rdoc'
+  rdoc.options << '--title' << 'Ref' << '--line-numbers' << '--inline-source' << '--main' << 'README.rdoc'
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-spec = eval(File.read(File.expand_path('../references.gemspec', __FILE__)))
+spec = eval(File.read(File.expand_path('../ref.gemspec', __FILE__)))
 
 Rake::GemPackageTask.new(spec) do |p|
   p.gem_spec = spec
@@ -45,11 +45,11 @@ namespace :java do
     base_dir = File.dirname(__FILE__)
     tmp_dir = File.join(base_dir, "tmp")
     classes_dir = File.join(tmp_dir, "classes")
-    jar_dir = File.join(base_dir, "lib", "org", "jruby", "ext", "references")
+    jar_dir = File.join(base_dir, "lib", "org", "jruby", "ext", "ref")
     FileUtils.rm_rf(classes_dir)
     ext_dir = File.join(base_dir, "ext", "java")
     source_files = FileList["#{base_dir}/**/*.java"]
-    jar_file = File.join(jar_dir, 'reference.jar')
+    jar_file = File.join(jar_dir, 'references.jar')
     # Only build if any of the source files have changed
     up_to_date = File.exist?(jar_file) && source_files.all?{|f| File.mtime(f) <= File.mtime(jar_file)}
     unless up_to_date
@@ -71,9 +71,12 @@ namespace :test do
     task :weak_reference do
       puts "Testing performance of weak references..."
       t = Time.now
-      100000.times do
-        References::WeakReference.new(Object.new)
+      Process.fork do
+        100000.times do
+          Ref::WeakReference.new(Object.new)
+        end
       end
+      Process.wait
       puts "Creating 100,000 weak references took #{Time.now - t} seconds"
     end
     
@@ -82,8 +85,10 @@ namespace :test do
       puts "Testing performance of soft references..."
       t = Time.now
       100000.times do |i|
-        References::SoftReference.new(Object.new)
+        Ref::SoftReference.new(Object.new)
       end
+      GC.start
+      GC.start
       puts "Creating 100,000 soft references took #{Time.now - t} seconds"
     end
   end

@@ -1,4 +1,4 @@
-module References
+module Ref
   # This module provides mock weak and strong references that are designed to be
   # used in tests. You can define a block where all weak and soft references created
   # will be mock references. You can then mimic running the garbage collector on
@@ -31,15 +31,15 @@ module References
       
       # Start using mock references.
       def setup
-        raise "References::Mock already setup" if object_space
+        raise "Ref::Mock already setup" if object_space
         
         @object_space = {}
         
         class << ObjectSpace
           unless method_defined?(:define_finalizer_with_mock_reference)
             def define_finalizer_with_mock_reference(obj, finalizer)
-              if Mock.object_space.include?(obj.__id__)
-                Mock.object_space[obj.__id__] << finalizer
+              if ::Ref::Mock.object_space.include?(obj.__id__)
+                ::Ref::Mock.object_space[obj.__id__] << finalizer
               else
                 define_finalizer_without_mock_reference(obj, finalizer)
               end
@@ -53,10 +53,10 @@ module References
         class << WeakReference
           unless method_defined?(:new_with_mock_reference)
             def new_with_mock_reference(obj)
-              if self == MockWeakReference
+              if self == Mock::MockWeakReference
                 new_without_mock_reference(obj)
               else
-                MockWeakReference.new(obj)
+                Mock::MockWeakReference.new(obj)
               end
             end
           end
@@ -68,10 +68,10 @@ module References
         class << SoftReference
           unless method_defined?(:new_with_mock_reference)
             def new_with_mock_reference(obj)
-              if self == MockSoftReference
+              if self == Mock::MockSoftReference
                 new_without_mock_reference(obj)
               else
-                MockSoftReference.new(obj)
+                Mock::MockSoftReference.new(obj)
               end
             end
           end

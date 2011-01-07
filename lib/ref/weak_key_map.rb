@@ -1,4 +1,4 @@
-module References
+module Ref
   # Implementation of a map in which only weakly referenced keys are kept to the map values.
   # This allows the garbage collector to reclaim these objects if the only reference to them
   # is the weak reference in the map.

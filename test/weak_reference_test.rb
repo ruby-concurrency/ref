@@ -1,10 +1,10 @@
 require 'test/unit'
-require File.expand_path("../../lib/references", __FILE__)
+require File.expand_path("../../lib/ref", __FILE__)
 
 class TestWeakReference < Test::Unit::TestCase
   def test_can_get_non_garbage_collected_objects
     obj = Object.new
-    ref = References::WeakReference.new(obj)
+    ref = Ref::WeakReference.new(obj)
     assert_equal obj, ref.object
     assert_equal obj.object_id, ref.referenced_object_id
   end
@@ -26,7 +26,7 @@ class TestWeakReference < Test::Unit::TestCase
         end
       end
       %w(Here are a bunch of objects that are allocated and can then be cleaned up by the garbage collector)
-      id_to_ref[obj.object_id] = References::WeakReference.new(obj)
+      id_to_ref[obj.object_id] = Ref::WeakReference.new(obj)
       if i % 1000 == 0
         GC.start
         sleep(0.01)
@@ -35,7 +35,7 @@ class TestWeakReference < Test::Unit::TestCase
   end
 
   def test_inspect
-    ref = References::WeakReference.new(Object.new)
+    ref = Ref::WeakReference.new(Object.new)
     assert ref.inspect
     GC.start
     GC.start

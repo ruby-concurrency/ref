@@ -1,4 +1,4 @@
-package org.jruby.ext.references;
+package org.jruby.ext.ref;
 
 import java.lang.ref.SoftReference;
 import org.jruby.Ruby;

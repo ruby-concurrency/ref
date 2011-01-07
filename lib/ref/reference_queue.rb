@@ -1,4 +1,4 @@
-module References
+module Ref
   # This class provides a simple thread safe container to hold a reference queue. Instances
   # of WeakReference can be added to the queue and as the objects pointed to by those references
   # are cleaned up by the garbage collector, the references will be added to the queue.
@@ -30,16 +30,21 @@ module References
     def initialize
       @queue = []
       @references = {}
-      @monitor = Monitor.new
-      @finalizer = lambda{|object_id| push(@references.delete(object_id))}
+      @lock = SafeMonitor.new
+      @finalizer = lambda do |object_id|
+        @lock.synchronize do
+          ref = @references.delete(object_id)
+          @queue.push(ref) if ref
+        end
+      end
     end
     
-    # Monitor a reference. When the object the reference points to is garbabe collected,
+    # Monitor a reference. When the object the reference points to is garbage collected,
     # the reference will be added to the queue.
     def monitor(reference)
       obj = reference.object
       if obj
-        @monitor.synchronize do
+        @lock.synchronize do
           @references[reference.referenced_object_id] = reference
         end
         ObjectSpace.define_finalizer(obj, @finalizer)
@@ -51,7 +56,7 @@ module References
     # Add a reference to the queue.
     def push(reference)
       if reference
-        @monitor.synchronize do
+        @lock.synchronize do
           @queue.push(reference)
         end
       end
@@ -59,14 +64,14 @@ module References
     
     # Pull the last reference off the queue. Returns +nil+ if their are no references.
     def pop
-      @monitor.synchronize do
+      @lock.synchronize do
         @queue.pop
       end
     end
     
     # Pull the next reference off the queue. Returns +nil+ if there are no references.
     def shift
-      @monitor.synchronize do
+      @lock.synchronize do
         @queue.shift
       end
     end

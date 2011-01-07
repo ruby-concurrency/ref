@@ -1,4 +1,4 @@
-module References
+module Ref
   class WeakReference < Reference
   # This implementation of a weak reference wraps the System::WeakReference class
   # that comes with IronRuby.

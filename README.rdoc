@@ -1,31 +1,31 @@
 This library provides object references for Ruby as well as some common utilities for working with references. Object references are used to point to other objects and come in three distinct flavors that interact differently with the garbage collector.
 
-* References::StrongReference - This is a plain old pointer to another object.
-* References::WeakReference - This is a pointer to another object, but it is not seen by the garbage collector and the memory used by the object can be reclaimed at any time.
-* References::SoftReference - This is similar to a weak reference, but the garbage collector is not as eager to reclaim the referenced object.
+* Ref::StrongReference - This is a plain old pointer to another object.
+* Ref::WeakReference - This is a pointer to another object, but it is not seen by the garbage collector and the memory used by the object can be reclaimed at any time.
+* Ref::SoftReference - This is similar to a weak reference, but the garbage collector is not as eager to reclaim the referenced object.
 
-All of these classes extend from a common References::Reference class and have a common interface.
+All of these classes extend from a common Ref::Reference class and have a common interface.
 
 Weak and soft references are useful when you have instantiated objects that you may want to use again but can recreate if necessary. Since the garbage collector determines when to reclaim the memory used by the objects, you don't need to worry about bloating the Ruby heap.
 
-== Example Usage
+= Example Usage
 
-  ref = References::WeakReference.new("hello")
+  ref = Ref::WeakReference.new("hello")
   ref.object # should be "hello"
   ObjectSpace.garbage_collect
   ref.object # should be nil (assuming the garbage collector reclaimed the reference)
 
-== Goodies
+= Goodies
 
 This library also includes tools for some common uses of weak and soft references.
 
-* References::WeakKeyMap - A map of keys to values where the keys are weak references
-* References::WeakValueMap - A map of keys to values where the values are weak references
-* References::SoftKeyMap - A map of keys to values where the keys are soft references
-* References::SoftValueMap - A map of keys to values where the values are soft references
-* References::ReferenceQueue - A thread safe implementation of a queue that will add references to itself as their objects are garbage collected.
+* Ref::WeakKeyMap - A map of keys to values where the keys are weak references
+* Ref::WeakValueMap - A map of keys to values where the values are weak references
+* Ref::SoftKeyMap - A map of keys to values where the keys are soft references
+* Ref::SoftValueMap - A map of keys to values where the values are soft references
+* Ref::ReferenceQueue - A thread safe implementation of a queue that will add references to itself as their objects are garbage collected.
 
-== Problems with WeakRef
+= Problems with WeakRef
 
 Ruby does come with the WeakRef class in the standard library. However, there are issues with this class across several different Ruby runtimes. This gem provides a common interface to weak references that works across MRI, Ruby Enterprise Edition, YARV, Jruby, Rubinius, and IronRuby.
 

@@ -1,4 +1,4 @@
-module References
+module Ref
   # Abstract base class for WeakKeyMap and SoftKeyMap.
   #
   # The classes behave similar to Hashes, but the keys in the map are not strong references
@@ -21,8 +21,8 @@ module References
     def initialize
       @values = {}
       @references_to_keys_map = {}
+      @lock = SafeMonitor.new
       @reference_cleanup = lambda{|object_id| remove_reference_to(object_id)}
-      @monitor = Monitor.new
     end
 
     # Get a value from the map by key. If the value has been reclaimed by the garbage
@@ -35,7 +35,7 @@ module References
     # Add a key/value to the map.
     def []=(key, value)
       ObjectSpace.define_finalizer(key, @reference_cleanup)
-      @monitor.synchronize do
+      @lock.synchronize do
         @references_to_keys_map[key.__id__] = self.class.reference_class.new(key)
         @values[key.__id__] = value
       end
@@ -75,7 +75,7 @@ module References
 
     # Clear the map of all key/value pairs.
     def clear
-      @monitor.synchronize do
+      @lock.synchronize do
         @values.clear
         @references_to_keys_map.clear
       end
@@ -108,8 +108,10 @@ module References
       end
       
       def remove_reference_to(object_id)
-        @references_to_keys_map.delete(object_id)
-        @values.delete(object_id)
+        @lock.synchronize do
+          @references_to_keys_map.delete(object_id)
+          @values.delete(object_id)
+        end
       end
   end
 end

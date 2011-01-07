@@ -1,10 +1,10 @@
 require 'test/unit'
-require File.expand_path("../../lib/references", __FILE__)
+require File.expand_path("../../lib/ref", __FILE__)
 
 class TestSoftReference < Test::Unit::TestCase
   def test_can_get_non_garbage_collected_objects
     obj = Object.new
-    ref = References::SoftReference.new(obj)
+    ref = Ref::SoftReference.new(obj)
     assert_equal obj, ref.object
     assert_equal obj.object_id, ref.referenced_object_id
   end
@@ -26,7 +26,7 @@ class TestSoftReference < Test::Unit::TestCase
         end
       end
       %w(Here are a bunch of objects that are allocated and can then be cleaned up by the garbage collector)
-      id_to_ref[obj.object_id] = References::SoftReference.new(obj)
+      id_to_ref[obj.object_id] = Ref::SoftReference.new(obj)
       if i % 1000 == 0
         GC.start
         sleep(0.01)
@@ -35,13 +35,13 @@ class TestSoftReference < Test::Unit::TestCase
   end
   
   def test_references_are_not_collected_immediately
-    ref = References::SoftReference.new(Object.new)
+    ref = Ref::SoftReference.new(Object.new)
     9.times{arr = %w(allocate some memory on the heap); arr *= 100; GC.start}
     assert ref.object
   end
   
   def test_inspect
-    ref = References::SoftReference.new(Object.new)
+    ref = Ref::SoftReference.new(Object.new)
     assert ref.inspect
     GC.start
     GC.start

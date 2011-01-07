@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name = 'references'
+  s.name = 'ref'
   s.version = File.read(File.expand_path("../VERSION", __FILE__)).strip
   s.summary = "Library that implements weak, soft, and strong references in Ruby."
   s.description = "Library that implements weak, soft, and strong references in Ruby that work across multiple runtimes (MRI, REE, YARV, Jruby, Rubinius, and IronRuby). Also includes implementation of maps/hashes that use references and a reference queue."
@@ -13,7 +13,5 @@ Gem::Specification.new do |s|
   
   s.has_rdoc = true
   s.rdoc_options = ["--charset=UTF-8", "--main", "README.rdoc"]
-  s.extra_rdoc_files = [
-    "README.rdoc"
-  ]
+  s.extra_rdoc_files = ["README.rdoc"]
 end

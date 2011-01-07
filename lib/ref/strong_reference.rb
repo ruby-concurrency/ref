@@ -1,4 +1,4 @@
-module References
+module Ref
   # This implementation of Reference holds a strong reference to an object. The
   # referenced object will not be garbage collected as long as the strong reference
   # exists.

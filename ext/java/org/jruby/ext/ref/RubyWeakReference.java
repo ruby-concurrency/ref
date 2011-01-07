@@ -1,4 +1,4 @@
-package org.jruby.ext.references;
+package org.jruby.ext.ref;
 
 import java.lang.ref.WeakReference;
 import org.jruby.Ruby;

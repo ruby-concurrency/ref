@@ -1,6 +1,6 @@
 require 'weakref'
 
-module References
+module Ref
   class WeakReference < Reference
   # This implementation of a weak reference simply wraps the standard WeakRef implementation
   # that comes with the Ruby standard library.

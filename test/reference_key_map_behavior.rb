@@ -1,5 +1,5 @@
 require 'test/unit'
-require File.expand_path("../../lib/references", __FILE__)
+require File.expand_path("../../lib/ref", __FILE__)
 
 module ReferenceKeyMapBehavior
   def test_uses_the_proper_references
@@ -7,7 +7,7 @@ module ReferenceKeyMapBehavior
   end
   
   def test_keeps_entries_with_strong_references
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       key_1 = Object.new
       key_2 = Object.new
@@ -19,7 +19,7 @@ module ReferenceKeyMapBehavior
   end
 
   def test_removes_entries_that_have_been_garbage_collected
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       key_1 = Object.new
       key_2 = Object.new
@@ -27,14 +27,14 @@ module ReferenceKeyMapBehavior
       hash[key_2] = "value 2"
       assert_equal "value 1", hash[key_1]
       assert_equal "value 2", hash[key_2]
-      References::Mock.gc(key_2)
+      Ref::Mock.gc(key_2)
       assert_equal "value 1", hash[key_1]
       assert_nil hash[key_2]
     end
   end
 
   def test_can_clear_the_map
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       value_1 = "value 1"
       value_2 = "value 2"
@@ -49,7 +49,7 @@ module ReferenceKeyMapBehavior
   end
 
   def test_can_delete_entries
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       value_1 = "value 1"
       value_2 = "value 2"
@@ -57,7 +57,7 @@ module ReferenceKeyMapBehavior
       key_2 = Object.new
       hash[key_1] = value_1
       hash[key_2] = value_2
-      References::Mock.gc(key_2)
+      Ref::Mock.gc(key_2)
       assert_nil hash.delete(key_2)
       assert_equal value_1, hash.delete(key_1)
       assert_nil hash[key_1]
@@ -65,7 +65,7 @@ module ReferenceKeyMapBehavior
   end
 
   def test_can_merge_in_another_hash
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       value_1 = "value 1"
       value_2 = "value 2"
@@ -78,7 +78,7 @@ module ReferenceKeyMapBehavior
       hash.merge!(key_3 => value_3)
       assert_equal "value 2", hash[key_2]
       assert_equal value_1, hash[key_1]
-      References::Mock.gc(key_2)
+      Ref::Mock.gc(key_2)
       assert_nil hash[key_2]
       assert_equal value_1, hash[key_1]
       assert_equal value_3, hash[key_3]
@@ -86,7 +86,7 @@ module ReferenceKeyMapBehavior
   end
 
   def test_can_get_all_keys
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       value_1 = "value 1"
       value_2 = "value 2"
@@ -98,13 +98,13 @@ module ReferenceKeyMapBehavior
       hash[key_2] = value_2
       hash[key_3] = value_3
       assert_equal [], [key_1, key_2, key_3] - hash.keys
-      References::Mock.gc(key_2)
+      Ref::Mock.gc(key_2)
       assert_equal [key_2], [key_1, key_2, key_3] - hash.keys
     end
   end
 
   def test_can_turn_into_an_array
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       value_1 = "value 1"
       value_2 = "value 2"
@@ -117,13 +117,13 @@ module ReferenceKeyMapBehavior
       hash[key_3] = value_3
       order = lambda{|a,b| a.last <=> b.last}
       assert_equal [[key_1, "value 1"], [key_2, "value 2"], [key_3, "value 3"]].sort(&order), hash.to_a.sort(&order)
-      References::Mock.gc(key_2)
+      Ref::Mock.gc(key_2)
       assert_equal [[key_1, "value 1"], [key_3, "value 3"]].sort(&order), hash.to_a.sort(&order)
     end
   end
 
   def test_can_iterate_over_all_entries
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       value_1 = "value 1"
       value_2 = "value 2"
@@ -139,7 +139,7 @@ module ReferenceKeyMapBehavior
       hash.each{|k,v| keys << k; values << v}
       assert_equal [], [key_1, key_2, key_3] - keys
       assert_equal ["value 1", "value 2", "value 3"], values.sort
-      References::Mock.gc(key_2)
+      Ref::Mock.gc(key_2)
       keys = []
       values = []
       hash.each{|k,v| keys << k; values << v}
@@ -149,7 +149,7 @@ module ReferenceKeyMapBehavior
   end
 
   def test_inspect
-    References::Mock.use do
+    Ref::Mock.use do
       hash = map_class.new
       hash[Object.new] = "value 1"
       assert hash.inspect
