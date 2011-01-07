@@ -49,14 +49,19 @@ namespace :java do
     FileUtils.rm_rf(classes_dir)
     ext_dir = File.join(base_dir, "ext", "java")
     source_files = FileList["#{base_dir}/**/*.java"]
-    FileUtils.mkdir_p(classes_dir)
-    `#{ENV['JAVA_HOME']}/bin/javac -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
-    if $? == 0
-      FileUtils.rm_rf(jar_dir) if File.exist?(jar_dir)
-      FileUtils.mkdir_p(jar_dir)
-      `#{ENV['JAVA_HOME']}/bin/jar cf '#{File.join(jar_dir, 'reference.jar')}' -C '#{classes_dir}' org`
+    jar_file = File.join(jar_dir, 'reference.jar')
+    # Only build if any of the source files have changed
+    up_to_date = File.exist?(jar_file) && source_files.all?{|f| File.mtime(f) <= File.mtime(jar_file)}
+    unless up_to_date
+      FileUtils.mkdir_p(classes_dir)
+      `#{ENV['JAVA_HOME']}/bin/javac -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
+      if $? == 0
+        FileUtils.rm_rf(jar_dir) if File.exist?(jar_dir)
+        FileUtils.mkdir_p(jar_dir)
+        `#{ENV['JAVA_HOME']}/bin/jar cf '#{jar_file}' -C '#{classes_dir}' org`
+      end
+      FileUtils.rm_rf(classes_dir)
     end
-    FileUtils.rm_rf(classes_dir)
   end
 end
 
