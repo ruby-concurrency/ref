@@ -4,14 +4,14 @@ rescue LoadError
   # Threads not available. Monitor will do nothing.
 end
 
-# The Monitor class in Ruby 1.8 has some bugs and also threads may not be available on all
-# runtimes. This class provides a simple, safe alternative.
 module Ref
+  # The Monitor class in Ruby 1.8 has some bugs and also threads may not be available on all
+  # runtimes. This class provides a simple, safe re-entrant mutex as an alternative.
   class SafeMonitor
     def initialize
       @owner = nil
       @count = 0
-      @mutex = Mutex.new if defined?(Mutex)
+      @mutex = defined?(Mutex) ? Mutex.new : nil
     end
   
     # Acquire an exclusive lock.
