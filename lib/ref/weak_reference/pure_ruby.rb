@@ -75,7 +75,17 @@ module Ref
     # Get the reference object. If the object has already been garbage collected,
     # then this method will return nil.
     def object #:nodoc:
-      @reference_pointer.object
+      if @reference_pointer
+        obj = @reference_pointer.object
+        unless obj
+          @@lock.synchronize do
+            @@weak_references.delete(object_id)
+            @reference_pointer.cleanup
+            @reference_pointer = nil
+          end
+        end
+        obj
+      end
     end
   end
 end

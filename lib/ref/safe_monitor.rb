@@ -33,7 +33,7 @@ module Ref
           @count -= 1
           if @count == 0
             @owner = nil
-            @mutex.unlock rescue puts "current #{Thread.current.object_id}; owner #{@owner}"
+            @mutex.unlock
           end
         end
       end
