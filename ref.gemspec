@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.authors = ['Brian Durand']
   s.email = ['bdurand@embellishedvisions.com']
-  s.homepage = "http://github.com/bdurand/references"
+  s.homepage = "http://github.com/bdurand/ref"
 
   s.files = ['README.rdoc', 'VERSION'] +  Dir.glob('lib/**/*'), Dir.glob('test/**/*'), Dir.glob('ext/**/*')
   s.require_path = 'lib'
