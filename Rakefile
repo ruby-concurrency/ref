@@ -54,7 +54,7 @@ namespace :java do
     up_to_date = File.exist?(jar_file) && source_files.all?{|f| File.mtime(f) <= File.mtime(jar_file)}
     unless up_to_date
       FileUtils.mkdir_p(classes_dir)
-      `#{ENV['JAVA_HOME']}/bin/javac -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
+      `#{ENV['JAVA_HOME']}/bin/javac -target 1.5 -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
       if $? == 0
         FileUtils.rm_rf(jar_dir) if File.exist?(jar_dir)
         FileUtils.mkdir_p(jar_dir)
