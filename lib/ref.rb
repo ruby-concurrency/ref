@@ -26,7 +26,7 @@ module Ref
       # IronRuby has it's own implementation of weak references.
       autoload :WeakReference, File.join(File.dirname(__FILE__), "ref", "weak_reference", "iron_ruby.rb")
     elsif defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
-      # If using Rubinius set the implementation to use WeakRef since it is very efficient.
+      # If using Rubinius set the implementation to use WeakRef since it is very efficient and using finalizers is not.
       autoload :WeakReference, File.join(File.dirname(__FILE__), "ref", "weak_reference", "weak_ref.rb")
     elsif defined?(ObjectSpace._id2ref)
       # If ObjectSpace can lookup objects from their object_id, then use the pure ruby implementation.

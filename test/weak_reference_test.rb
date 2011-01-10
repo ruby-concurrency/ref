@@ -4,9 +4,12 @@ require File.expand_path("../../lib/ref", __FILE__)
 class TestWeakReference < Test::Unit::TestCase
   def test_can_get_non_garbage_collected_objects
     obj = Object.new
-    ref = Ref::WeakReference.new(obj)
-    assert_equal obj, ref.object
-    assert_equal obj.object_id, ref.referenced_object_id
+    ref_1 = Ref::WeakReference.new(obj)
+    ref_2 = Ref::WeakReference.new(obj)
+    assert_equal obj, ref_1.object
+    assert_equal obj.object_id, ref_1.referenced_object_id
+    assert_equal obj, ref_2.object
+    assert_equal obj.object_id, ref_2.referenced_object_id
   end
 
   def test_get_the_correct_object

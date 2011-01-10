@@ -84,7 +84,7 @@ namespace :test do
     task :soft_reference do
       puts "Testing performance of soft references..."
       t = Time.now
-      100000.times do |i|
+      100000.times do
         Ref::SoftReference.new(Object.new)
       end
       GC.start
