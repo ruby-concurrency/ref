@@ -1,5 +1,4 @@
-require 'test/unit'
-require File.expand_path("../../lib/ref", __FILE__)
+require File.expand_path("../test_helper", __FILE__)
 
 module ReferenceValueMapBehavior
   def test_keeps_entries_with_strong_references

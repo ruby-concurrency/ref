@@ -1,5 +1,4 @@
-require 'test/unit'
-require File.expand_path("../../lib/ref", __FILE__)
+require File.expand_path("../test_helper", __FILE__)
 
 class TestSoftReference < Test::Unit::TestCase
   def test_can_get_non_garbage_collected_objects

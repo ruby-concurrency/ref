@@ -31,6 +31,7 @@ Rake::GemPackageTask.new(spec) do |p|
   p.gem_spec = spec
 end
 Rake.application["package"].prerequisites.unshift("java:build")
+Rake.application["package"].prerequisites.unshift("rbx:delete_rbc_files")
 
 desc "Release to rubygems.org"
 task :release => :package do
@@ -62,6 +63,16 @@ namespace :java do
       end
       FileUtils.rm_rf(classes_dir)
     end
+  end
+end
+
+namespace :rbx do
+  desc "Cleanup *.rbc files in lib directory"
+  task :delete_rbc_files do
+    FileList["lib/**/*.rbc"].each do |rbc_file|
+      File.delete(rbc_file)
+    end
+    nil
   end
 end
 
