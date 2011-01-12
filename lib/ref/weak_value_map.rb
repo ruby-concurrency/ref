@@ -10,7 +10,7 @@ module Ref
   #
   # === Example usage:
   #
-  #   cache = References::WeakValueMap.new
+  #   cache = Ref::WeakValueMap.new
   #   foo = "foo"
   #   cache["strong"] = foo  # add a value with a strong reference
   #   cache["weak"] = "bar"  # add a value without a strong reference

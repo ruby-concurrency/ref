@@ -9,7 +9,7 @@ module Ref
   # === Example usage:
   #
   #   foo = Object.new
-  #   ref = References::SoftReference.new(foo)
+  #   ref = Ref::SoftReference.new(foo)
   #   ref.object			# should be foo
   #   ObjectSpace.garbage_collect
   #   ref.object			# should be foo

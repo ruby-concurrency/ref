@@ -6,11 +6,11 @@ module Ref
   #
   # Example usage:
   #
-  #   References::Mock.use do
+  #   Ref::Mock.use do
   #     obj = Object.new
-  #     ref = References::WeakReference.new(obj)
+  #     ref = Ref::WeakReference.new(obj)
   #     ref.object   # obj
-  #     References::Mock.gc(obj)  # mimics the garbage collector reclaiming the referenced object
+  #     Ref::Mock.gc(obj)  # mimics the garbage collector reclaiming the referenced object
   #     ref.object   # nil
   #   end
   module Mock

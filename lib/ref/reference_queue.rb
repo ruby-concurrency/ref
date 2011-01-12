@@ -13,13 +13,13 @@ module Ref
   #
   # === Example usage:
   #
-  #   class MyRef < References::WeakReference
+  #   class MyRef < Ref::WeakReference
   #     def cleanup
   #       # Do something...
   #     end
   #   end
   #   
-  #   queue = References::ReferenceQueue.new
+  #   queue = Ref::ReferenceQueue.new
   #   ref = MyRef.new(Object.new)
   #   queue.monitor(ref)
   #   queue.shift                 # = nil

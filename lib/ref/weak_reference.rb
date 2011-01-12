@@ -6,7 +6,7 @@ module Ref
   # === Example usage:
   #
   #   foo = Object.new
-  #   ref = References::WeakReference.new(foo)
+  #   ref = Ref::WeakReference.new(foo)
   #   ref.object			# should be foo
   #   ObjectSpace.garbage_collect
   #   ref.object			# should be nil

@@ -10,7 +10,7 @@ module Ref
   #
   # === Example usage:
   #
-  #   cache = References::WeakKeyMap.new
+  #   cache = Ref::WeakKeyMap.new
   #   obj = MyObject.find_by_whatever
   #   obj_info = Service.lookup_object_info(obj)
   #   cache[obj] = Service.lookup_object_info(obj)

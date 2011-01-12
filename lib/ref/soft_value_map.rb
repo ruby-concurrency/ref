@@ -10,7 +10,7 @@ module Ref
   #
   # === Example usage:
   #
-  #   cache = References::SoftValueMap.new
+  #   cache = Ref::SoftValueMap.new
   #   foo = "foo"
   #   cache["strong"] = foo  # add a value with a strong reference
   #   cache["soft"] = "bar"  # add a value without a strong reference
