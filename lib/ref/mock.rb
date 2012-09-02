@@ -107,11 +107,16 @@ module Ref
       # Simulate garbage collection of the objects passed in as arguments. If no objects
       # are specified, all objects will be reclaimed.
       def gc(*objects)
-        objects = object_space.keys if objects.empty?
-        objects.each do |obj|
-          finalizers = object_space.delete(obj.__id__)
+        objects = if objects.empty?
+          object_space.keys
+        else
+          objects.map { |obj| obj.__id__ }
+        end
+
+        objects.each do |id|
+          finalizers = object_space.delete(id)
           if finalizers
-            finalizers.each{|finalizer| finalizer.call(obj.__id__)}
+            finalizers.each{|finalizer| finalizer.call(id)}
           end
         end
       end
