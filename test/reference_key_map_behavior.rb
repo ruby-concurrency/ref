@@ -1,5 +1,3 @@
-require File.expand_path("../test_helper", __FILE__)
-
 module ReferenceKeyMapBehavior
   def test_uses_the_proper_references
     assert_equal reference_class, map_class.reference_class

@@ -1,0 +1,11 @@
+1.0.2
+
+- Fix mock object used for testing (Burgestrand)
+
+1.0.1
+
+- No code changes. Just including the license file in the release and removing deprecated tasks.
+
+1.0.0
+
+- Initial release.

@@ -1,7 +1,6 @@
 require 'rake'
-require 'rake/rdoctask'
 require 'rake/testtask'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require File.expand_path('../lib/ref', __FILE__)
 
 desc 'Default: run unit tests.'
@@ -17,17 +16,9 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-desc 'Generate documentation.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.options << '--title' << 'Ref' << '--line-numbers' << '--inline-source' << '--main' << 'README.rdoc'
-  rdoc.rdoc_files.include('README.rdoc')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
-
 spec = eval(File.read(File.expand_path('../ref.gemspec', __FILE__)))
 
-Rake::GemPackageTask.new(spec) do |p|
+Gem::PackageTask.new(spec) do |p|
   p.gem_spec = spec
 end
 Rake.application["package"].prerequisites.unshift("java:build")
