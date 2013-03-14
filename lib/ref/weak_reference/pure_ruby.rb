@@ -1,8 +1,8 @@
 module Ref
   # This is a pure ruby implementation of a weak reference. It is much more
-  # efficient than the bundled WeakRef implementation because it does not
+  # efficient than the WeakRef implementation bundled in MRI 1.8 and 1.9
   # subclass Delegator which is very heavy to instantiate and utilizes a
-  # fair amount of memory under Ruby 1.8.
+  # because it does not fair amount of memory under Ruby 1.8.
   class WeakReference < Reference
     
     class ReferencePointer
@@ -26,12 +26,14 @@ module Ref
       private
         # Verify that the object is the same one originally set for the weak reference.
         def verify_backreferences(obj) #:nodoc:
+          return nil unless supports_backreference?(obj)
           backreferences = obj.instance_variable_get(:@__weak_backreferences__) if obj.instance_variable_defined?(:@__weak_backreferences__)
           backreferences && backreferences.include?(object_id)
         end
       
         # Add a backreference to the object.
         def add_backreference(obj) #:nodoc:
+          return unless supports_backreference?(obj)
           backreferences = obj.instance_variable_get(:@__weak_backreferences__) if obj.instance_variable_defined?(:@__weak_backreferences__)
           unless backreferences
             backreferences = []
@@ -42,11 +44,16 @@ module Ref
       
         # Remove backreferences from the object.
         def remove_backreference(obj) #:nodoc:
+          return unless supports_backreference?(obj)
           backreferences = obj.instance_variable_get(:@__weak_backreferences__) if obj.instance_variable_defined?(:@__weak_backreferences__)
           if backreferences
             backreferences.dup.delete(object_id)
             obj.send(:remove_instance_variable, :@__weak_backreferences__) if backreferences.empty?
           end
+        end
+        
+        def supports_backreference?(obj)
+          obj.respond_to?(:instance_variable_get) && obj.respond_to?(:instance_variable_defined?)
         end
     end
     

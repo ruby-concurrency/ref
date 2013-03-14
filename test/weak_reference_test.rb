@@ -43,4 +43,14 @@ class TestWeakReference < Test::Unit::TestCase
     GC.start
     assert ref.inspect
   end
+  
+  class TestBasicObject < Object
+    undef_method(:instance_variable_defined?)
+    undef_method(:instance_variable_get)
+  end
+  
+  def test_basic_object_does_not_throw_exception
+    obj = TestBasicObject.new
+    Ref::WeakReference.new(obj)
+  end
 end
