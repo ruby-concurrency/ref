@@ -32,7 +32,7 @@ task :release => :package do
 end
 
 namespace :java do
-  desc "Build the jar files for Jruby support"
+  desc "Build the jar files for Jruby support. You must set your JRUBY_HOME environment variable to the root of your jruby install."
   task :build do
     base_dir = File.dirname(__FILE__)
     tmp_dir = File.join(base_dir, "tmp")
@@ -40,12 +40,13 @@ namespace :java do
     jar_dir = File.join(base_dir, "lib", "org", "jruby", "ext", "ref")
     FileUtils.rm_rf(classes_dir)
     ext_dir = File.join(base_dir, "ext", "java")
-    source_files = FileList["#{base_dir}/**/*.java"]
+    source_files = FileList["#{base_dir}/ext/**/*.java"]
     jar_file = File.join(jar_dir, 'references.jar')
     # Only build if any of the source files have changed
     up_to_date = File.exist?(jar_file) && source_files.all?{|f| File.mtime(f) <= File.mtime(jar_file)}
     unless up_to_date
       FileUtils.mkdir_p(classes_dir)
+      puts "#{ENV['JAVA_HOME']}/bin/javac -target 1.5 -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'"
       `#{ENV['JAVA_HOME']}/bin/javac -target 1.5 -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
       if $? == 0
         FileUtils.rm_rf(jar_dir) if File.exist?(jar_dir)
