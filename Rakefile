@@ -25,11 +25,7 @@ Rake.application["package"].prerequisites.unshift("java:build")
 Rake.application["package"].prerequisites.unshift("rbx:delete_rbc_files")
 
 desc "Release to rubygems.org"
-task :release => :package do
-  require 'rake/gemcutter'
-  Rake::Gemcutter::Tasks.new(spec).define
-  Rake::Task['gem:push'].invoke
-end
+task :release => [:package, "gem:push"]
 
 namespace :java do
   desc "Build the jar files for Jruby support. You must set your JRUBY_HOME environment variable to the root of your jruby install."
