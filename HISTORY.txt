@@ -1,3 +1,7 @@
+1.0.4
+
+- Support for BasicObject in pure ruby weak reference implementation.
+
 1.0.3
 
 - Support Ruby 2.0 WeakRef implementation
