@@ -54,6 +54,8 @@ module Ref
         
         def supports_backreference?(obj)
           obj.respond_to?(:instance_variable_get) && obj.respond_to?(:instance_variable_defined?)
+        rescue NoMethodError
+          false
         end
     end
     
