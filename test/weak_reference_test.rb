@@ -48,7 +48,7 @@ class TestWeakReference < Test::Unit::TestCase
     def test_basic_object_does_not_throw_exception
       obj = BasicObject.new
       ref = Ref::WeakReference.new(obj)
-      assert_nil ref.object
+      assert_equal obj, ref.object
     end
   end
 end

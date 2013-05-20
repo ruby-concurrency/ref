@@ -1,3 +1,7 @@
+1.0.5
+
+- Fix breaking test in ruby 2.0
+
 1.0.4
 
 - Support for BasicObject in pure ruby weak reference implementation.
