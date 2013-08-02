@@ -148,14 +148,16 @@ module ReferenceKeyMapBehavior
   def test_size
     Ref::Mock.use do
       hash = map_class.new
-      assert_true hash.empty?
+      assert hash.empty?
       assert_equal 0, hash.size
+      key_1 = Object.new
       key_2 = Object.new
       hash[key_1] = "value 1"
-      assert_false hash.empty?
+      hash[key_2] = "value 2"
+      refute hash.empty?
       assert_equal 2, hash.size
       Ref::Mock.gc(key_2)
-      assert_false hash.empty?
+      refute hash.empty?
       assert_equal 1, hash.size
     end
   end
