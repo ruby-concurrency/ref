@@ -32,6 +32,8 @@ module Ref
       @values[rkey] if rkey
     end
 
+    alias_method :get, :[]
+
     # Add a key/value to the map.
     def []=(key, value)
       ObjectSpace.define_finalizer(key, @reference_cleanup)
@@ -40,6 +42,8 @@ module Ref
         @values[key.__id__] = value
       end
     end
+
+    alias_method :put, :[]=
 
     # Remove the value associated with the key from the map.
     def delete(key)
@@ -90,7 +94,7 @@ module Ref
 
     # The number of entries in the map
     def size
-      @references_to_keys_map.count do |rkey, ref|
+      @references_to_keys_map.count do |_, ref|
         ref.object
       end
     end
@@ -99,7 +103,11 @@ module Ref
 
     # True if there are entries that exist in the map
     def empty?
-      size == 0
+      @references_to_keys_map.each do |_, ref|
+        return false if ref.object
+      end
+
+      true
     end
 
     def inspect
