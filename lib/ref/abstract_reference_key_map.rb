@@ -88,6 +88,20 @@ module Ref
       end
     end
 
+    # The number of entries in the map
+    def size
+      @references_to_keys_map.count do |rkey, ref|
+        ref.object
+      end
+    end
+
+    alias_method :length, :size
+
+    # True if there are entries that exist in the map
+    def empty?
+      size == 0
+    end
+
     def inspect
       live_entries = {}
       each do |key, value|
