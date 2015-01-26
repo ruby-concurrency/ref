@@ -1,7 +1,7 @@
-require 'test/unit'
-
 require 'coveralls'
 Coveralls.wear!
+
+require 'test/unit'
 
 require 'ref'
 require 'ref/mock'

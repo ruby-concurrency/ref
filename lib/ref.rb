@@ -10,7 +10,7 @@ module Ref
     # Use native Java references
     begin
       $LOAD_PATH.unshift(File.dirname(__FILE__))
-      require 'ref/org/jruby/ext/ref/references'
+      require 'org/jruby/ext/ref/references'
     ensure
       $LOAD_PATH.shift if $LOAD_PATH.first == File.dirname(__FILE__)
     end
