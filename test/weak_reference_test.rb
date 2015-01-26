@@ -1,4 +1,4 @@
-require File.expand_path("../test_helper", __FILE__)
+require_relative 'test_helper'
 
 class TestWeakReference < Test::Unit::TestCase
   def test_can_get_non_garbage_collected_objects
@@ -44,7 +44,8 @@ class TestWeakReference < Test::Unit::TestCase
     assert ref.inspect
   end
   
-  if defined?(BasicObject)
+  if defined?(BasicObject) && RUBY_VERSION != '1.9.3'
+    # Ref::WeakRef does not work on MRI 1.9.3 or earlier
     def test_basic_object_does_not_throw_exception
       obj = BasicObject.new
       ref = Ref::WeakReference.new(obj)

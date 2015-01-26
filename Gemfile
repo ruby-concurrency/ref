@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gemspec
+
 group :development do
   gem 'rake', '~> 10.3.2'
 end
@@ -8,7 +10,7 @@ group :testing do
   gem 'test-unit', '~> 3.0.9'
   #gem 'rspec', '~> 3.0.0'
   #gem 'simplecov', '~> 0.8.2', :require => false
-  #gem 'coveralls', '~> 0.7.0', :require => false
+  gem 'coveralls', '~> 0.7.3', :require => false
 end
 
 group :documentation do
