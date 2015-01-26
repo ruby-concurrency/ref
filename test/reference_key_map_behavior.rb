@@ -145,6 +145,23 @@ module ReferenceKeyMapBehavior
     end
   end
 
+  def test_size
+    Ref::Mock.use do
+      hash = map_class.new
+      assert hash.empty?
+      assert_equal 0, hash.size
+      key_1 = Object.new
+      key_2 = Object.new
+      hash[key_1] = "value 1"
+      hash[key_2] = "value 2"
+      refute hash.empty?
+      assert_equal 2, hash.size
+      Ref::Mock.gc(key_2)
+      refute hash.empty?
+      assert_equal 1, hash.size
+    end
+  end
+
   def test_inspect
     Ref::Mock.use do
       hash = map_class.new
