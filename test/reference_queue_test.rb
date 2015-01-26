@@ -1,4 +1,4 @@
-require File.expand_path("../test_helper", __FILE__)
+require_relative 'test_helper'
 
 class TestReferenceQueue < Test::Unit::TestCase
   def test_can_add_references

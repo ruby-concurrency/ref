@@ -4,3 +4,5 @@ rdoc
 *.rbc
 coverage
 .ruby-version
+.ruby-gemset
+Gemfile.lock
