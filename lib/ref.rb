@@ -16,10 +16,7 @@ module Ref
     end
   else
     require 'ref/soft_reference'
-    if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'ironruby'
-      # IronRuby has it's own implementation of weak references.
-      require 'ref/weak_reference/iron_ruby'
-    elsif defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
+    if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
       # If using Rubinius set the implementation to use WeakRef since it is very efficient and using finalizers is not.
       require 'ref/weak_reference/weak_ref'
     elsif defined?(::ObjectSpace::WeakMap)

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['bbdurand@gmail.com']
   s.homepage    = "http://github.com/ruby-concurrency/ref"
   s.summary     = "Library that implements weak, soft, and strong references in Ruby."
-  s.description = "Library that implements weak, soft, and strong references in Ruby that work across multiple runtimes (MRI, REE, YARV, Jruby, Rubinius, and IronRuby). Also includes implementation of maps/hashes that use references and a reference queue."
+  s.description = "Library that implements weak, soft, and strong references in Ruby that work across multiple runtimes (MRI, REE, YARV, Jruby and Rubinius). Also includes implementation of maps/hashes that use references and a reference queue."
   s.license     = "MIT"
   s.date        = Time.now.strftime('%Y-%m-%d')
 
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.files        += Dir['test/**/*.*']
 
   s.require_paths = ['lib']
-  
+
   s.has_rdoc         = true
   s.rdoc_options     = ["--charset=UTF-8", "--main", "README.md"]
   s.extra_rdoc_files = ["README.md"]
