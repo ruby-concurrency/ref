@@ -7,13 +7,11 @@ module Ref
 
   # Set the best implementation for weak references based on the runtime.
   if defined?(RUBY_PLATFORM) && RUBY_PLATFORM == 'java'
-    # Use native Java references
-    begin
-      $LOAD_PATH.unshift(File.dirname(__FILE__))
-      require 'org/jruby/ext/ref/references'
-    ensure
-      $LOAD_PATH.shift if $LOAD_PATH.first == File.dirname(__FILE__)
-    end
+    $LOAD_PATH.unshift(File.dirname(__FILE__))
+    require 'ref/jruby/weak_reference'
+    require 'ref/jruby/soft_reference'
+
+    $LOAD_PATH.shift if $LOAD_PATH.first == File.dirname(__FILE__)
   else
     require 'ref/soft_reference'
     if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
