@@ -9,19 +9,19 @@ module Ref
       def reference_class=(klass) #:nodoc:
         @reference_class = klass
       end
-    
+
       def reference_class #:nodoc:
         raise NotImplementedError.new("#{name} is an abstract class and cannot be instantiated") unless @reference_class
         @reference_class
       end
     end
-    
+
     # Create a new map. Values added to the map will be cleaned up by the garbage
     # collector if there are no other reference except in the map.
     def initialize
       @references = {}
       @references_to_keys_map = {}
-      @lock = SafeMonitor.new
+      @lock = Monitor.new
       @reference_cleanup = lambda{|object_id| remove_reference_to(object_id)}
     end
 
@@ -74,14 +74,14 @@ module Ref
       each{|k,v| vals << v}
       vals
     end
-    
+
     # Turn the map into an arry of [key, value] entries
     def to_a
       array = []
       each{|k,v| array << [k, v]}
       array
     end
-    
+
     # Iterate through all the key/value pairs in the map that have not been reclaimed
     # by the garbage collector.
     def each

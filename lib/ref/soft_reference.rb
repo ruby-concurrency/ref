@@ -19,12 +19,12 @@ module Ref
   class SoftReference < Reference
     @@strong_references = [{}]
     @@gc_flag_set = false
-    
+
     # Number of garbage collection cycles after an object is used before a reference to it can be reclaimed.
     MIN_GC_CYCLES = 10
-    
-    @@lock = SafeMonitor.new
-    
+
+    @@lock = Monitor.new
+
     @@finalizer = lambda do |object_id|
       @@lock.synchronize do
         while @@strong_references.size >= MIN_GC_CYCLES do
@@ -34,14 +34,14 @@ module Ref
         @@gc_flag_set = false
       end
     end
-    
+
     # Create a new soft reference to an object.
     def initialize(obj)
       @referenced_object_id = obj.__id__
       @weak_reference = WeakReference.new(obj)
       add_strong_reference(obj)
     end
-    
+
     # Get the referenced object. If the object has been reclaimed by the
     # garbage collector, then this will return nil.
     def object
@@ -50,7 +50,7 @@ module Ref
       add_strong_reference(obj) if obj
       obj
     end
-    
+
     private
       # Create a strong reference to the object. This reference will live
       # for three passes of the garbage collector.

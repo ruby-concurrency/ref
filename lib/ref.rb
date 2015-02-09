@@ -3,7 +3,6 @@ module Ref
   require 'ref/abstract_reference_key_map'
   require 'ref/reference'
   require 'ref/reference_queue'
-  require 'ref/safe_monitor'
 
   # Set the best implementation for weak references based on the runtime.
   if defined?(RUBY_PLATFORM) && RUBY_PLATFORM == 'java'
