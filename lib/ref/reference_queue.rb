@@ -18,7 +18,7 @@ module Ref
   #       # Do something...
   #     end
   #   end
-  #   
+  #
   #   queue = Ref::ReferenceQueue.new
   #   ref = MyRef.new(Object.new)
   #   queue.monitor(ref)
@@ -30,7 +30,7 @@ module Ref
     def initialize
       @queue = []
       @references = {}
-      @lock = SafeMonitor.new
+      @lock = Monitor.new
       @finalizer = lambda do |object_id|
         @lock.synchronize do
           ref = @references.delete(object_id)
@@ -38,7 +38,7 @@ module Ref
         end
       end
     end
-    
+
     # Monitor a reference. When the object the reference points to is garbage collected,
     # the reference will be added to the queue.
     def monitor(reference)
@@ -52,7 +52,7 @@ module Ref
         push(reference)
       end
     end
-    
+
     # Add a reference to the queue.
     def push(reference)
       if reference
@@ -61,26 +61,26 @@ module Ref
         end
       end
     end
-    
+
     # Pull the last reference off the queue. Returns +nil+ if their are no references.
     def pop
       @lock.synchronize do
         @queue.pop
       end
     end
-    
+
     # Pull the next reference off the queue. Returns +nil+ if there are no references.
     def shift
       @lock.synchronize do
         @queue.shift
       end
     end
-    
+
     # Return +true+ if the queue is empty.
     def empty?
       @queue.empty?
     end
-    
+
     # Get the current size of the queue.
     def size
       @queue.size

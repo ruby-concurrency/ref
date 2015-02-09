@@ -4,25 +4,25 @@ module Ref
   # subclass Delegator which is very heavy to instantiate and utilizes a
   # because it does not fair amount of memory under Ruby 1.8.
   class WeakReference < Reference
-    
+
     class ReferencePointer
       def initialize(object)
         @referenced_object_id = object.__id__
         add_backreference(object)
       end
-      
+
       def cleanup
         obj = ObjectSpace._id2ref(@referenced_object_id) rescue nil
         remove_backreference(obj) if obj
       end
-      
+
       def object
         obj = ObjectSpace._id2ref(@referenced_object_id)
         obj if verify_backreferences(obj)
       rescue RangeError
         nil
       end
-      
+
       private
         # Verify that the object is the same one originally set for the weak reference.
         def verify_backreferences(obj) #:nodoc:
@@ -30,7 +30,7 @@ module Ref
           backreferences = obj.instance_variable_get(:@__weak_backreferences__) if obj.instance_variable_defined?(:@__weak_backreferences__)
           backreferences && backreferences.include?(object_id)
         end
-      
+
         # Add a backreference to the object.
         def add_backreference(obj) #:nodoc:
           return unless supports_backreference?(obj)
@@ -41,7 +41,7 @@ module Ref
           end
           backreferences << object_id
         end
-      
+
         # Remove backreferences from the object.
         def remove_backreference(obj) #:nodoc:
           return unless supports_backreference?(obj)
@@ -51,16 +51,16 @@ module Ref
             obj.send(:remove_instance_variable, :@__weak_backreferences__) if backreferences.empty?
           end
         end
-        
+
         def supports_backreference?(obj)
           obj.respond_to?(:instance_variable_get) && obj.respond_to?(:instance_variable_defined?)
         rescue NoMethodError
           false
         end
     end
-    
+
     @@weak_references = {}
-    @@lock = SafeMonitor.new
+    @@lock = Monitor.new
 
     # Finalizer that cleans up weak references when references are destroyed.
     @@reference_finalizer = lambda do |object_id|
