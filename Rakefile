@@ -16,52 +16,44 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-spec = eval(File.read(File.expand_path('../ref.gemspec', __FILE__)))
 
-Gem::PackageTask.new(spec) do |p|
-  p.gem_spec = spec
+GEM_NAME       = 'ref'
+EXTENSION_NAME = 'extension'
+JAVA_EXT_NAME  = 'ref_ext'
+CORE_GEMSPEC   = Gem::Specification.load('ref.gemspec')
+
+if Ref.jruby?
+  CORE_GEM = "#{GEM_NAME}-#{Ref::VERSION}-java.gem"
+
+  require 'rake/javaextensiontask'
+  Rake::JavaExtensionTask.new(JAVA_EXT_NAME, CORE_GEMSPEC) do |ext|
+    ext.ext_dir = 'ext'
+  end
+else
+  CORE_GEM = "#{GEM_NAME}-#{Ref::VERSION}.gem"
 end
-Rake.application["package"].prerequisites.unshift("java:build")
-Rake.application["package"].prerequisites.unshift("rbx:delete_rbc_files")
 
-desc "Release to rubygems.org"
-task :release => [:package, "gem:push"]
+task :clean do
+  rm_f Dir.glob('./**/*.so')
+  rm_f Dir.glob('./**/*.bundle')
+  rm_f Dir.glob('./lib/*.jar')
+  mkdir_p 'pkg'
+end
 
-namespace :java do
-  desc "Build the jar files for Jruby support. You must set your JRUBY_HOME environment variable to the root of your jruby install."
-  task :build do
-    base_dir = File.dirname(__FILE__)
-    tmp_dir = File.join(base_dir, "tmp")
-    classes_dir = File.join(tmp_dir, "classes")
-    jar_dir = File.join(base_dir, "lib", "org", "jruby", "ext", "ref")
-    FileUtils.rm_rf(classes_dir)
-    ext_dir = File.join(base_dir, "ext", "java")
-    source_files = FileList["#{base_dir}/ext/**/*.java"]
-    jar_file = File.join(jar_dir, 'references.jar')
-    # Only build if any of the source files have changed
-    up_to_date = File.exist?(jar_file) && source_files.all?{|f| File.mtime(f) <= File.mtime(jar_file)}
-    unless up_to_date
-      FileUtils.mkdir_p(classes_dir)
-      puts "#{ENV['JAVA_HOME']}/bin/javac -target 1.5 -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'"
-      `#{ENV['JAVA_HOME']}/bin/javac -target 1.5 -classpath '#{"#{ENV['JRUBY_HOME']}/lib/jruby.jar"}' -d '#{classes_dir}' -sourcepath '#{ext_dir}' '#{source_files.join("' '")}'`
-      if $? == 0
-        FileUtils.rm_rf(jar_dir) if File.exist?(jar_dir)
-        FileUtils.mkdir_p(jar_dir)
-        `#{ENV['JAVA_HOME']}/bin/jar cf '#{jar_file}' -C '#{classes_dir}' org`
-      end
-      FileUtils.rm_rf(classes_dir)
-    end
+
+namespace :build do
+  build_deps = [:clean]
+  build_deps << :compile if Ref.jruby?
+  desc "Build #{CORE_GEM} into the pkg directory"
+  task :core => build_deps do
+    sh "gem build #{CORE_GEMSPEC.name}.gemspec"
+    sh 'mv *.gem pkg/'
   end
 end
 
-namespace :rbx do
-  desc "Cleanup *.rbc files in lib directory"
-  task :delete_rbc_files do
-    FileList["lib/**/*.rbc"].each do |rbc_file|
-      File.delete(rbc_file)
-    end
-    nil
-  end
+if Ref.jruby?
+  desc 'Build JRuby-specific core gem (alias for `build:core`)'
+  task :build => ['build:core']
 end
 
 namespace :test do
@@ -69,16 +61,20 @@ namespace :test do
     desc "Run a speed test on how long it takes to create 100000 weak references"
     task :weak_reference do
       puts "Testing performance of weak references..."
-      t = Time.now
-      Process.fork do
-        100000.times do
-          Ref::WeakReference.new(Object.new)
+      unless Ref.jruby?
+        t = Time.now
+        Process.fork do
+          100000.times do
+            Ref::WeakReference.new(Object.new)
+          end
         end
+        Process.wait
+        puts "Creating 100,000 weak references took #{Time.now - t} seconds"
+      else
+        puts 'Cannot run weak_reference performance test on JRuby - Fork is not available on this platform.'
       end
-      Process.wait
-      puts "Creating 100,000 weak references took #{Time.now - t} seconds"
     end
-    
+
     desc "Run a speed test on how long it takes to create 100000 soft references"
     task :soft_reference do
       puts "Testing performance of soft references..."

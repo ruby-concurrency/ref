@@ -4,6 +4,7 @@ gemspec
 
 group :development do
   gem 'rake', '~> 10.3.2'
+  gem 'rake-compiler', '0.9.5'
 end
 
 group :testing do
