@@ -5,11 +5,11 @@ require 'ref/version'
 Gem::Specification.new do |s|
   s.name        = 'ref'
   s.version     = Ref::VERSION
-  s.authors     = ['Brian Durand']
-  s.email       = ['bbdurand@gmail.com']
+  s.authors     = ['Brian Durand', 'The Ruby Concurrency Team']
+  s.email       = ['bbdurand@gmail.com', 'concurrent-ruby@googlegroups.com']
   s.homepage    = "http://github.com/ruby-concurrency/ref"
   s.summary     = "Library that implements weak, soft, and strong references in Ruby."
-  s.description = "Library that implements weak, soft, and strong references in Ruby that work across multiple runtimes (MRI, REE, YARV, Jruby and Rubinius). Also includes implementation of maps/hashes that use references and a reference queue."
+  s.description = "Library that implements weak, soft, and strong references in Ruby that work across multiple runtimes (MRI,Jruby and Rubinius). Also includes implementation of maps/hashes that use references and a reference queue."
   s.license     = "MIT"
   s.date        = Time.now.strftime('%Y-%m-%d')
 
