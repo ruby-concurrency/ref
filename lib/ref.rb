@@ -4,14 +4,15 @@ module Ref
   require 'ref/reference'
   require 'ref/reference_queue'
 
-  # Set the best implementation for weak references based on the runtime.
-  if defined?(RUBY_PLATFORM) && RUBY_PLATFORM == 'java'
-    # Use native Java references
+  if defined?(Java)
     begin
       $LOAD_PATH.unshift(File.dirname(__FILE__))
+      require 'ref_ext'
       require 'org/jruby/ext/ref/references'
-    ensure
-      $LOAD_PATH.shift if $LOAD_PATH.first == File.dirname(__FILE__)
+    rescue LoadError
+      require 'ref/soft_reference'
+      require 'ref/weak_reference'
+      warn 'Error loading Rspec rake tasks, probably building the gem...'
     end
   else
     require 'ref/soft_reference'
@@ -35,4 +36,8 @@ module Ref
   require 'ref/strong_reference'
   require 'ref/weak_key_map'
   require 'ref/weak_value_map'
+
+  def self.jruby?
+    defined?(Java)
+  end
 end
