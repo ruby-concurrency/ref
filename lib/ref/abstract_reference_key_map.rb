@@ -28,8 +28,10 @@ module Ref
     # Get a value from the map by key. If the value has been reclaimed by the garbage
     # collector, this will return nil.
     def [](key)
-      rkey = ref_key(key)
-      @values[rkey] if rkey
+      @lock.synchronize do
+        rkey = ref_key(key)
+        @values[rkey] if rkey
+      end
     end
 
     alias_method :get, :[]
@@ -47,12 +49,14 @@ module Ref
 
     # Remove the value associated with the key from the map.
     def delete(key)
-      rkey = ref_key(key)
-      if rkey
-        @references_to_keys_map.delete(rkey)
-        @values.delete(rkey)
-      else
-        nil
+      @lock.synchronize do
+        rkey = ref_key(key)
+        if rkey
+          @references_to_keys_map.delete(rkey)
+          @values.delete(rkey)
+        else
+          nil
+        end
       end
     end
 
@@ -87,8 +91,8 @@ module Ref
 
     # Merge the values from another hash into this map.
     def merge!(other_hash)
-      other_hash.each do |key, value|
-        self[key] = value
+      @lock.synchronize do
+        other_hash.each { |key, value| self[key] = value }
       end
     end
 
@@ -106,7 +110,6 @@ module Ref
       @references_to_keys_map.each do |_, ref|
         return false if ref.object
       end
-
       true
     end
 
