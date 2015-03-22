@@ -53,7 +53,7 @@ describe Ref::ReferenceQueue do
     end
   end
 
-  describe 'references are added immediately if the_object has been collected' do
+  context 'references are added immediately if the_object has been collected' do
     specify do
       Ref::Mock.use do
         ref = Ref::WeakReference.new(obj_1)
@@ -64,4 +64,20 @@ describe Ref::ReferenceQueue do
       end
     end
   end
-end
+
+  context 'references are added when the object has been collected' do
+    specify do
+      Ref::Mock.use do
+        ref = Ref::WeakReference.new(obj_1)
+        queue.monitor(ref)
+        result = queue.shift
+        expect(result).to eq nil
+
+        Ref::Mock.gc(obj_1)
+
+        object = queue.shift
+        expect(ref.referenced_object_id).to eq object.referenced_object_id
+      end
+    end
+  end
+ end
