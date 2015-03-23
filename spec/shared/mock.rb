@@ -28,13 +28,13 @@ module Ref
           end
         end
       end
-      
+
       # Start using mock references.
       def setup
         raise "Ref::Mock already setup" if object_space
-        
+
         @object_space = {}
-        
+
         class << ObjectSpace
           unless method_defined?(:define_finalizer_with_mock_reference)
             def define_finalizer_with_mock_reference(obj, finalizer)
@@ -45,11 +45,11 @@ module Ref
               end
             end
           end
-          
+
           alias_method :define_finalizer_without_mock_reference, :define_finalizer
           alias_method :define_finalizer, :define_finalizer_with_mock_reference
         end
-        
+
         class << WeakReference
           unless method_defined?(:new_with_mock_reference)
             def new_with_mock_reference(obj)
@@ -60,11 +60,11 @@ module Ref
               end
             end
           end
-          
+
           alias_method :new_without_mock_reference, :new
           alias_method :new, :new_with_mock_reference
         end
-        
+
         class << SoftReference
           unless method_defined?(:new_with_mock_reference)
             def new_with_mock_reference(obj)
@@ -75,12 +75,12 @@ module Ref
               end
             end
           end
-          
+
           alias_method :new_without_mock_reference, :new
           alias_method :new, :new_with_mock_reference
         end
       end
-      
+
       # Stop using mock references.
       def cleanup
         @object_space = nil
@@ -88,12 +88,12 @@ module Ref
           alias_method :define_finalizer_with_mock_reference, :define_finalizer
           alias_method :define_finalizer, :define_finalizer_without_mock_reference
         end
-        
+
         class << WeakReference
           alias_method :new_with_mock_reference, :new
           alias_method :new, :new_without_mock_reference
         end
-        
+
         class << SoftReference
           alias_method :new_with_mock_reference, :new
           alias_method :new, :new_without_mock_reference
@@ -121,7 +121,7 @@ module Ref
         end
       end
     end
-    
+
     module MockReference #:nodoc:
       def initialize(obj)
         @object = obj
@@ -129,7 +129,7 @@ module Ref
         raise "Reference::Mock not setup yet" unless Mock.object_space
         Mock.object_space[obj.__id__] ||= []
       end
-    
+
       def object
         if @object && Mock.object_space.include?(@object.__id__)
           @object
@@ -138,13 +138,13 @@ module Ref
         end
       end
     end
-  
+
     class MockWeakReference < WeakReference #:nodoc:
       include MockReference
     end
-  
+
     class MockSoftReference < SoftReference #:nodoc:
       include MockReference
     end
-  end  
+  end
 end

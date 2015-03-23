@@ -3,19 +3,21 @@ require 'rake/testtask'
 require 'rubygems/package_task'
 require File.expand_path('../lib/ref', __FILE__)
 
-desc 'Default: run unit tests.'
-task :default => :test
+begin
+  require 'rspec'
+  require 'rspec/core/rake_task'
 
-desc 'RVM likes to call it tests'
-task :tests => :test
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = '--color --backtrace --format documentation'
+  end
 
-Rake::TestTask.new do |t|
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.warning = true
-  t.verbose = true
+  task :default => :spec
+rescue LoadError
+  puts 'Error loading Rspec rake tasks, probably building the gem...'
 end
 
+
+spec = eval(File.read(File.expand_path('../ref.gemspec', __FILE__)))
 
 GEM_NAME       = 'ref'
 EXTENSION_NAME = 'extension'
