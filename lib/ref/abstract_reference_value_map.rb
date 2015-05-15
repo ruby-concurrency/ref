@@ -84,6 +84,13 @@ module Ref
       array
     end
 
+    # Returns a hash containing the names and values for the struct’s members.
+    def to_h
+      hash = {}
+      each{|k,v| hash[k] = v}
+      hash
+    end
+
     # Iterate through all the key/value pairs in the map that have not been reclaimed
     # by the garbage collector.
     def each
@@ -98,6 +105,18 @@ module Ref
       @lock.synchronize do
         @references.clear
         @references_to_keys_map.clear
+      end
+    end
+
+    # Returns a new struct containing the contents of `other` and the contents
+    # of `self`. If no block is specified, the value for entries with duplicate
+    # keys will be that of `other`. Otherwise the value for each duplicate key
+    # is determined by calling the block with the key, its value in `self` and
+    # its value in `other`.
+    def merge(other_hash, &block)
+      to_h.merge(other_hash, &block).reduce(self.class.new) do |map, pair|
+        map[pair.first] = pair.last
+        map
       end
     end
 
@@ -136,16 +155,16 @@ module Ref
 
     private
 
-      def remove_reference_to(object_id)
-        @lock.synchronize do
-          keys = @references_to_keys_map[object_id]
-          if keys
-            keys.each do |key|
-              @references.delete(key)
-            end
-            @references_to_keys_map.delete(object_id)
+    def remove_reference_to(object_id)
+      @lock.synchronize do
+        keys = @references_to_keys_map[object_id]
+        if keys
+          keys.each do |key|
+            @references.delete(key)
           end
+          @references_to_keys_map.delete(object_id)
         end
       end
+    end
   end
 end
