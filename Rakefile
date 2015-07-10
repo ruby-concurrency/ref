@@ -1,7 +1,8 @@
-require 'rake'
-require 'rake/testtask'
-require 'rubygems/package_task'
-require File.expand_path('../lib/ref', __FILE__)
+#!/usr/bin/env rake
+
+$:.push File.join(File.dirname(__FILE__), 'lib')
+
+require 'ref'
 
 begin
   require 'rspec'
@@ -15,7 +16,6 @@ begin
 rescue LoadError
   puts 'Error loading Rspec rake tasks, probably building the gem...'
 end
-
 
 spec = eval(File.read(File.expand_path('../ref.gemspec', __FILE__)))
 
@@ -42,7 +42,6 @@ task :clean do
   mkdir_p 'pkg'
 end
 
-
 namespace :build do
   build_deps = [:clean]
   build_deps << :compile if Ref.jruby?
@@ -53,10 +52,7 @@ namespace :build do
   end
 end
 
-if Ref.jruby?
-  desc 'Build JRuby-specific core gem (alias for `build:core`)'
-  task :build => ['build:core']
-end
+task :build => ['build:core']
 
 namespace :test do
   namespace :performance do
