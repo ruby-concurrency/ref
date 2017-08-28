@@ -142,7 +142,7 @@ module Ref
 
     private
 
-    def ref_key (key)
+    def ref_key(key)
       ref = @references_to_keys_map[key.__id__]
       if ref && ref.object
         ref.referenced_object_id
