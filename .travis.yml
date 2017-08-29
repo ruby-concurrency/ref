@@ -1,12 +1,15 @@
 language: ruby
 dist: trusty
 rvm:
+  - 2.4.1
+  - 2.3.4
   - 2.2.7
   - 2.1.10
   - 2.0.0
   - 1.9.3
-  - ruby-head
+  - jruby-9.1.12.0
   - jruby-1.7.27
+  - ruby-head
   - jruby-head
   - rbx-3.84
 before_install:
@@ -26,6 +29,4 @@ branches:
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: ruby-head
-    - rvm: jruby-head
-    - rvm: 1.9.3
+    - rvm: rbx-3.84
