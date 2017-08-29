@@ -10,7 +10,7 @@ end
 group :testing do
   gem 'test-unit', '~> 3.0.9'
   gem 'rspec', '~> 3.6'
-  gem 'coveralls', '~> 0.7.3', :require => false
+  gem 'coveralls', '~> 0.8.21', :require => false
 end
 
 group :documentation do
