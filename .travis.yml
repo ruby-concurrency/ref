@@ -9,7 +9,8 @@ rvm:
   - jruby-1.7.27
   - jruby-head
   - rbx-3.84
-
+after_success:
+  - "bundle exec coveralls push"
 jdk:
   - oraclejdk8
 
