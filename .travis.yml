@@ -15,8 +15,6 @@ rvm:
 before_install:
   - gem update --system
   - gem install bundler
-after_success:
-  - "bundle exec coveralls push"
 jdk:
   - oraclejdk8
 
